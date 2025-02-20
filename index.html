@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Virtual</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+        .ticket {
+            border: 1px solid #000;
+            padding: 20px;
+            width: 300px;
+        }
+        .ticket h2 {
+            text-align: center;
+        }
+        .ticket .info {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+        }
+        .table-header h2 {
+            margin: 0;
+            padding-left: 0.5mm;
+        }
+        .table-footer {
+            margin-left: 0.5mm;
+        }
+        .table-footer h2, .table-footer h4 {
+            margin: 0;
+            padding: 1mm 0;
+        }
+        .saldo-text, .nro_boleta, .nro_mesa, .fecha_recepcion, .info-tienda, .m-0, .direction {
+            margin: 0;
+        }
+        .policy {
+            margin-left: 0.5mm;
+        }
+        .table-footer td {
+            padding: 0;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body onload="window.print()">
+    <div id="thermal-pos">
+        <div class="ticket">
+            <h2>ASADERO Y RESTAURANTE EL GORDO</h2>
+            <p>NIT: 25284614-1</p>
+            <p>LIZBETH CAMPO TRUJILLO</p>
+            <p>CL PRA - EL TAMBO CAUCA</p>
+            <p>Fecha: <span id="fecha"></span></p>
+            <p>Factura No.: <span id="nfactura"></span></p>
+            <table class="info">
+                <thead>
+                    <tr class="table-header">
+                        <th><h3>Productos</h3></th>
+                        <th><h3>Cantidad</h3></th>
+                        <th><h3>Valor</h3></th>
+                    </tr>
+                </thead>
+                <tbody id="tablaBody"></tbody>
+            </table>
+            <hr>
+            <div class="table-footer">
+                <table>
+                    <tr>
+                        <td class="m-0">Total:</td>
+                        <td class="m-0" id="total"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="policy">
+                <p>Gracias por su compra!</p>
+                <p>Vuelva pronto!</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Obtener parámetros de la URL
+        const params = new URLSearchParams(window.location.search);
+        const fecha = params.has('fecha') ? params.get('fecha') : "dd/mm/aaaa hh:mm:ss";
+        const nfactura = params.has('nfactura') ? params.get('nfactura') : "---";
+        const productos = params.has('productos') ? params.get('productos').split('/*/') : [];
+        const cantidades = params.has('cantidad') ? params.get('cantidad').split('/*/') : [];
+        const valores = params.has('valor') ? params.get('valor').split('/*/') : [];
+        const total = params.has('total') ? params.get('total') : "0.00";
+
+        // Formato decimales
+        const formatNumber = (num) => parseFloat(num).toLocaleString('es-ES', { minimumFractionDigits: 2 });
+
+        // Actualizar elementos del ticket
+        document.getElementById('fecha').textContent = fecha;
+        document.getElementById('nfactura').textContent = nfactura;
+        document.getElementById('total').textContent = formatNumber(total);
+
+        // Llenar tabla con los productos
+        const tablaBody = document.getElementById('tablaBody');
+        productos.forEach((producto, index) => {
+            const row = document.createElement('tr');
+            const cellProducto = document.createElement('td');
+            const cellCantidad = document.createElement('td');
+            const cellValor = document.createElement('td');
+
+            cellProducto.textContent = producto;
+            cellCantidad.textContent = cantidades[index];
+            cellValor.textContent = formatNumber(valores[index]);
+
+            row.appendChild(cellProducto);
+            row.appendChild(cellCantidad);
+            row.appendChild(cellValor);
+
+            tablaBody.appendChild(row);
+        });
+    </script>
+</body>
+</html>
